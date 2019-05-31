@@ -1,5 +1,29 @@
 # Changelog
 
+## 4.4.0 - 2019-05-17
+
+- Upgrade to Laravel 5.8
+- Update npm dependencies
+- Added email verification
+- Removed yarn.lock in favor of package-lock.json
+- Fixed `laravel-mix` (HMR, versioning, build cleanup), thanks to [TemaSM](https://github.com/TemaSM)
+- Removed JS polyfills, if you want to support IE11 see [laravel-mix#436](https://github.com/JeffreyWay/laravel-mix/issues/436) 
+
+## 4.3.0 - 2018-10-21
+
+- Fixed npm install
+- Update fontawesome
+
+## 4.2.0 - 2018-10-04
+
+- Upgrade to Laravel 5.7
+
+## 4.1.1 - 2018-05-10
+
+- Fixed oauth popup
+- Fixed session expired alert
+- Update npm dependencies
+
 ## 4.1.0 - 2018-03-14
 
 - Upgrade to Laravel 5.6
