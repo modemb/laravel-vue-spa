@@ -1,7 +1,10 @@
 // import Cookies from 'js-cookie'
+import axios from 'axios'
 import * as types from '../mutation-types'
 
-const { locale, locales } = window.config
+axios.get('api/users').then(response => {
+  state.users = response.data        
+}) 
 
 // state
 export const state = {
@@ -17,18 +20,14 @@ export const getters = {
 export const mutations = {
 
   [types.FETCH_USERS_SUCCESS] (state, { users }) {
-    state.users = users
-  },
-
-  // [types.FETCH_USER_FAILURE] (state) {
-  //   state.token = null
-  //   Cookies.remove('token')
-  // },
+    state.users = users  
+    console.log(users);  
+  }
 }
 
 // actions
 export const actions = {
-  async fetchUser ({ commit }) {
+  async fetchUsers ({ commit }) {
     try {
       const { data } = await axios.get('/api/users')
 
@@ -38,3 +37,4 @@ export const actions = {
     }
   }
 }
+ 

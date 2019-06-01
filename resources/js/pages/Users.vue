@@ -103,13 +103,14 @@
 
 <script>
   import axios from 'axios'
+  import Form from 'vform'
   import { mapGetters } from 'vuex'
 
   export default {
     middleware: 'auth',
     data() {
       return {
-        items: [],
+        // items: [],
         fields: [
           { key: 'id', label: 'ID', sortable: true },
           { key: 'name', label: 'Full Name', sortable: true },
@@ -139,24 +140,22 @@
           .map(f => {
             return { text: f.label, value: f.key }
           })
-      }
+      },
+      ...mapGetters({
+        items: 'users/users'
+      })
     }, 
-    mounted(){
-      axios.get('api/users').then(response => {
-        this.items = response.data
-        this.totalRows = response.data.length
-        console.log(response.data);        
-      })      
+    mounted() {
+      // Set the initial number of items
+      this.totalRows = this.items.length    
     },
-    // computed: mapGetters({
-    //   // items: 'users/users'
-    //   items: 'auth/user'
-    // }),
     methods: {
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+        this.$root.$emit('bv::show::modal', this.infoModal.id, button) 
+        
+        fetchUsers()
       },
       resetInfoModal() {
         this.infoModal.title = ''
@@ -166,7 +165,8 @@
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      }
+      } 
     }
   }
+        
 </script>

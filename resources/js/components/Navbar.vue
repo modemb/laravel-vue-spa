@@ -91,6 +91,10 @@ export default {
 
       // Redirect to login.
       this.$router.push({ name: 'login' })
+    },
+    async fetchUsers () {
+      // Fetch the user.
+      await this.$store.dispatch('users/fetchUser')
     }
   }
 }
