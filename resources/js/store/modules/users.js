@@ -4,7 +4,7 @@ import * as types from '../mutation-types'
 
 axios.get('api/users').then(response => {
   state.users = response.data        
-}) 
+})
 
 // state
 export const state = {
@@ -18,23 +18,16 @@ export const getters = {
 
 // mutations
 export const mutations = {
-
-  [types.FETCH_USERS_SUCCESS] (state, { users }) {
-    state.users = users  
-    console.log(users);  
+  [types.DELETE_USER] (state, users) { 
+    state.users = users.data    
   }
 }
 
 // actions
 export const actions = {
-  async fetchUsers ({ commit }) {
-    try {
-      const { data } = await axios.get('/api/users')
-
-      commit(types.FETCH_USERS_SUCCESS, { users: data })
-    } catch (e) {
-      commit(types.FETCH_USERS_FAILURE)
-    }
+  async deleteUser ({ commit }, id) {
+    await axios.post(`/api/user/${id}`)
+    commit(types.DELETE_USER, await axios.get('api/users'))       
   }
-}
+} 
  

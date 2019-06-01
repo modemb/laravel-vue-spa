@@ -72,6 +72,9 @@
         <b-button size="sm" @click="row.toggleDetails">
           {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
         </b-button>
+        <b-button size="sm" @click="deleteUser(row.item.id)">
+           Delete
+        </b-button>
       </template>
 
       <template slot="row-details" slot-scope="row">
@@ -102,8 +105,6 @@
 </template>
 
 <script>
-  import axios from 'axios'
-  import Form from 'vform'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -133,6 +134,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        items: 'users/users'
+      }),
       sortOptions() {
         // Create an options list from our fields
         return this.fields
@@ -140,10 +144,7 @@
           .map(f => {
             return { text: f.label, value: f.key }
           })
-      },
-      ...mapGetters({
-        items: 'users/users'
-      })
+      }
     }, 
     mounted() {
       // Set the initial number of items
@@ -154,8 +155,6 @@
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
         this.$root.$emit('bv::show::modal', this.infoModal.id, button) 
-        
-        fetchUsers()
       },
       resetInfoModal() {
         this.infoModal.title = ''
@@ -165,7 +164,10 @@
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      } 
+      }, 
+      deleteUser(id){
+        this.$store.dispatch('users/deleteUser', id)
+      }
     }
   }
         
