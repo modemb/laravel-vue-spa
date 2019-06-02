@@ -109,7 +109,7 @@
 
   export default {
     middleware: 'auth',
-    data() {
+    data() {      
       return {
         // items: [],
         fields: [
@@ -147,8 +147,10 @@
       }
     }, 
     mounted() {
-      // Set the initial number of items
-      this.totalRows = this.items.length    
+      this.$store.dispatch('users/getUser').then(() => {
+        // Set the initial number of items
+        this.totalRows = this.items.length 
+      })   
     },
     methods: {
       info(item, index, button) {

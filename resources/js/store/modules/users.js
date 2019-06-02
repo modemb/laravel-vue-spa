@@ -1,10 +1,7 @@
 // import Cookies from 'js-cookie'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 import * as types from '../mutation-types'
-
-axios.get('api/users').then(response => {
-  state.users = response.data        
-})
 
 // state
 export const state = {
@@ -18,16 +15,45 @@ export const getters = {
 
 // mutations
 export const mutations = {
-  [types.DELETE_USER] (state, users) { 
+  [types.FETCH_USERS] (state, users) { 
     state.users = users.data    
   }
 }
 
 // actions
-export const actions = {
-  async deleteUser ({ commit }, id) {
-    await axios.post(`/api/user/${id}`)
-    commit(types.DELETE_USER, await axios.get('api/users'))       
+export const actions = {  
+  async getUser ({ commit }) {
+    commit(types.FETCH_USERS, await axios.get('api/users')) 
+  },
+  deleteUser ({ commit }, id) {
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async result => {
+      if (result.value) {       
+
+        await axios.post(`/api/user/${id}`)
+
+        Swal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        )
+        
+        commit(types.FETCH_USERS, await axios.get('api/users'))
+      }
+    })
+
+
+
+
+       
   }
 } 
  
