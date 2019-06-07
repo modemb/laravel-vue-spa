@@ -1,7 +1,7 @@
 // import Cookies from 'js-cookie'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import * as types from '../mutation-types'
-
-const { locale, locales } = window.config
 
 // state
 export const state = {
@@ -15,26 +15,45 @@ export const getters = {
 
 // mutations
 export const mutations = {
-
-  [types.FETCH_USERS_SUCCESS] (state, { users }) {
-    state.users = users
+  [types.FETCH_USERS] (state, users) { 
+    state.users = users.data    
   },
-
-  // [types.FETCH_USER_FAILURE] (state) {
-  //   state.token = null
-  //   Cookies.remove('token')
-  // },
+  [types.UPDATE_USERS] (state, {users}) {
+    state.users = users     
+  }
 }
 
 // actions
-export const actions = {
-  async fetchUser ({ commit }) {
-    try {
-      const { data } = await axios.get('/api/users')
+export const actions = {  
+  async getUser ({ commit }) {
+    commit(types.FETCH_USERS, await axios.get('api/users')) 
+  },
+  updateUser ({ commit }, payload) {
+    commit(types.UPDATE_USERS, payload)
+  },
+  deleteUser ({ commit }, id) {
+    Swal.fire({
+      title: `Are you sure you want to delele user ${id}?`,
+      text: "You won't be able to revert this!",
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async result => {
+      if (result.value) {       
 
-      commit(types.FETCH_USERS_SUCCESS, { users: data })
-    } catch (e) {
-      commit(types.FETCH_USERS_FAILURE)
-    }
+        await axios.delete(`/api/users/${id}`)
+
+        Swal.fire(
+          'Deleted!',
+          'User has been deleted.',
+          'success'
+        )
+
+        commit(types.FETCH_USERS, await axios.get('api/users'))
+      }
+    })       
   }
-}
+} 
+ 

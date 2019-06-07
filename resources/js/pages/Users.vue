@@ -56,32 +56,69 @@
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
       @filtered="onFiltered"
-    >
+      >
       <template slot="*name" slot-scope="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
 
-      <template slot="isActive" slot-scope="row">
-        {{ row.value ? 'Yes :)' : 'No :(' }}
-      </template>
-
       <template slot="actions" slot-scope="row">
-        <b-button size="sm" @click="info(row.item, row.index, $event.target)" class="mr-1">
-          Info modal
-        </b-button>
-        <b-button size="sm" @click="row.toggleDetails">
-          {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
-        </b-button>
-      </template>
 
-      <template slot="row-details" slot-scope="row">
-        <b-card>
-          <ul>
-            <li v-for="(value, key) in row.item" :key="key">{{ key }}: {{ value }}</li>
-          </ul>
-        </b-card>
+        <ul class="nav *flex-column flex-row nav-pills">
+          <li class="nav-item pl-3" data-toggle="modal" data-target="#item"  @click=editUser(row.item)>
+            <fa icon=edit />Edit         
+          </li>
+          <li class="nav-item pl-3" @click=deleteUser(row.item.id)>
+            <fa icon=trash-alt />Delete           
+          </li>
+        </ul>
+
+        <!-- Modal -->
+        <div class="modal fade" id="item" tabindex="-1" role="dialog" aria-labelledby="itemTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+
+              <card :title="$t('your_info')">
+                <form @submit.prevent=update(form.id) @keydown="form.onKeydown($event)">
+                  <alert-success :form="form" :message="$t('info_updated')" />                   
+
+                  <!-- Name -->
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label text-md-right">{{ $t('name') }}</label>
+                    <div class="col-md-7">
+                      <input v-model="form.name" :class="{ 'is-invalid': form.errors.has('name') }" class="form-control" type="text" name="name">
+                      <has-error :form="form" field="name" />
+                    </div>
+                  </div>
+
+                  <!-- Email -->
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label text-md-right">{{ $t('email') }}</label>
+                    <div class="col-md-7">
+                      <input v-model="form.email" :class="{ 'is-invalid': form.errors.has('email') }" class="form-control" type="email" name="email">
+                      <has-error :form="form" field="email" />
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <div class="col-md-9 ml-md-auto">
+                      <v-button :loading="form.busy" type="success">
+                        {{ $t('update') }}
+                      </v-button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        Close
+                      </button>
+                    </div>
+                  </div>
+                </form>                
+              </card>
+
+            </div>
+          </div>
+        </div>
+
       </template>
-    </b-table>
+      
+    </b-table>    
 
     <b-row>
       <b-col md="6" class="my-1">
@@ -94,22 +131,25 @@
       </b-col>
     </b-row>
 
-    <!-- Info modal -->
-    <b-modal :id="infoModal.id" :title="infoModal.title" ok-only @hide="resetInfoModal">
-      <pre>{{ infoModal.content }}</pre>
-    </b-modal>
+    
+
   </b-container>
 </template>
 
 <script>
-  import axios from 'axios'
   import { mapGetters } from 'vuex'
-
+  import Form from 'vform'
+  
   export default {
     middleware: 'auth',
-    data() {
+    data() {      
       return {
-        items: [],
+        // items: [],
+        form: new Form({
+          name: '',
+          email: '',
+          id: ''
+        }),
         fields: [
           { key: 'id', label: 'ID', sortable: true },
           { key: 'name', label: 'Full Name', sortable: true },
@@ -132,6 +172,9 @@
       }
     },
     computed: {
+      ...mapGetters({
+        items: 'users/users'
+      }),
       sortOptions() {
         // Create an options list from our fields
         return this.fields
@@ -141,22 +184,17 @@
           })
       }
     }, 
-    mounted(){
-      axios.get('api/users').then(response => {
-        this.items = response.data
-        this.totalRows = response.data.length
-        console.log(response.data);        
-      })      
+    mounted() {
+      this.$store.dispatch('users/getUser').then(() => {
+        // Set the initial number of items
+        this.totalRows = this.items.length 
+      })   
     },
-    // computed: mapGetters({
-    //   // items: 'users/users'
-    //   items: 'auth/user'
-    // }),
     methods: {
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+        this.$root.$emit('bv::show::modal', this.infoModal.id, button) 
       },
       resetInfoModal() {
         this.infoModal.title = ''
@@ -166,7 +204,34 @@
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
+      }, 
+      deleteUser(id){
+        this.$store.dispatch('users/deleteUser', id)
+      }, 
+      editUser(user){
+        this.form.name = user.name
+        this.form.email = user.email 
+        this.form.id = user.id       
+      },
+      async update (id) {
+        const { data } = await this.form.patch('/api/users/'+id)
+      
+        this.$store.dispatch('users/updateUser', { users: data })
+        if(window.config.authID == id){
+          const { data } = await this.form.patch('/api/settings/profile')
+
+          this.$store.dispatch('auth/updateUser', { user: data })
+          this.$store.dispatch('auth/updateUser', { user: data });
+        }
       }
     }
   }
+        
 </script>
+
+<style scoped>
+  .pl-3 {
+    cursor: pointer;
+  }  
+</style>
+  

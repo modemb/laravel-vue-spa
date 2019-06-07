@@ -23,8 +23,7 @@ export const mutations = {
   },
 
   [types.FETCH_USER_SUCCESS] (state, { user }) {
-    state.user = user 
-    console.log(user);   
+    state.user = user    
   },
 
   [types.FETCH_USER_FAILURE] (state) {

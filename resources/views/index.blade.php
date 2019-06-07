@@ -4,6 +4,7 @@ $config = [
     'locale' => $locale = app()->getLocale(),
     'locales' => config('app.locales'),
     'githubAuth' => config('services.github.client_id'),
+    'authID' => Auth::check()?Auth::id():0
 ];
 @endphp
 <!DOCTYPE html>
@@ -21,7 +22,8 @@ $config = [
 
   {{-- Global configuration object --}}
   <script>
-    window.config = @json($config);
+    window.config = @json($config);    
+    console.log(window.config.authID);    
   </script>
 
   {{-- Load the application scripts --}}
