@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        return 'create';
     }
 
     /**
@@ -36,7 +36,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return 'store';
     }
 
     /**
@@ -47,7 +47,7 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+        return 'show';
     }
 
     /**
@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        return 'edit';
     }
 
     /**
@@ -70,7 +70,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+
+        $this->validate($request, [
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+        ]);
+
+        tap($user)->update($request->only('name', 'email'));
+        return DB::table('users')->get();
     }
 
     /**

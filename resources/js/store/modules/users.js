@@ -17,6 +17,9 @@ export const getters = {
 export const mutations = {
   [types.FETCH_USERS] (state, users) { 
     state.users = users.data    
+  },
+  [types.UPDATE_USERS] (state, {users}) {
+    state.users = users     
   }
 }
 
@@ -25,35 +28,32 @@ export const actions = {
   async getUser ({ commit }) {
     commit(types.FETCH_USERS, await axios.get('api/users')) 
   },
+  updateUser ({ commit }, payload) {
+    commit(types.UPDATE_USERS, payload)
+  },
   deleteUser ({ commit }, id) {
-
     Swal.fire({
-      title: 'Are you sure?',
+      title: `Are you sure you want to delele user ${id}?`,
       text: "You won't be able to revert this!",
       type: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
       confirmButtonText: 'Yes, delete it!'
     }).then(async result => {
       if (result.value) {       
 
-        await axios.post(`/api/user/${id}`)
+        await axios.delete(`/api/users/${id}`)
 
         Swal.fire(
           'Deleted!',
-          'Your file has been deleted.',
+          'User has been deleted.',
           'success'
         )
-        
+
         commit(types.FETCH_USERS, await axios.get('api/users'))
       }
-    })
-
-
-
-
-       
+    })       
   }
 } 
  
