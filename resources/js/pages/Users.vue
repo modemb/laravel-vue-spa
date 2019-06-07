@@ -217,11 +217,10 @@
         const { data } = await this.form.patch('/api/users/'+id)
       
         this.$store.dispatch('users/updateUser', { users: data })
+        
         if(window.config.authID == id){
           const { data } = await this.form.patch('/api/settings/profile')
-
           this.$store.dispatch('auth/updateUser', { user: data })
-          this.$store.dispatch('auth/updateUser', { user: data });
         }
       }
     }

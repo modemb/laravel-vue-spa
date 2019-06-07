@@ -67,7 +67,6 @@ export default {
       const { data } = await this.form.patch('/api/settings/profile')
 
       this.$store.dispatch('auth/updateUser', { user: data })
-      this.$store.dispatch('users/updateUser', { users: data })
     }
   }
 }

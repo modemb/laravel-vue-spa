@@ -22,8 +22,7 @@ $config = [
 
   {{-- Global configuration object --}}
   <script>
-    window.config = @json($config);    
-    console.log(window.config.authID);    
+    window.config = @json($config);       
   </script>
 
   {{-- Load the application scripts --}}
