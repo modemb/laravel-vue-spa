@@ -22,8 +22,12 @@ $config = [
 
   {{-- Global configuration object --}}
   <script>
+<<<<<<< HEAD
     window.config = @json($config);    
     console.log(window.config.authID);    
+=======
+    window.config = @json($config);       
+>>>>>>> modemb/dev
   </script>
 
   {{-- Load the application scripts --}}
