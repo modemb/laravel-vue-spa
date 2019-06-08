@@ -56,8 +56,8 @@
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
       @filtered="onFiltered"
-      >
-      <template slot="*name" slot-scope="row">
+
+      ><template slot="*name" slot-scope="row">
         {{ row.value.first }} {{ row.value.last }}
       </template>
 
@@ -130,8 +130,6 @@
         ></b-pagination>
       </b-col>
     </b-row>
-
-    
 
   </b-container>
 </template>
