@@ -64,11 +64,11 @@
       <template slot="actions" slot-scope="row">
 
         <ul class="nav *flex-column flex-row nav-pills">
-          <li class="nav-item pl-3" data-toggle="modal" data-target="#item"  @click=editUser(row.item)>
-            <fa icon=edit />Edit         
+          <li class="nav-item col-sm-1" data-toggle="modal" data-target="#item"  @click=editUser(row.item)>
+            <fa icon=edit />         
           </li>
-          <li class="nav-item pl-3" @click=deleteUser(row.item.id)>
-            <fa icon=trash-alt />Delete           
+          <li class="nav-item col-sm-1" @click=deleteUser(row.item.id)>
+            <fa icon=trash-alt />         
           </li>
         </ul>
 
@@ -227,7 +227,7 @@
 </script>
 
 <style scoped>
-  .pl-3 {
+  .nav-item {
     cursor: pointer;
   }  
 </style>
