@@ -65,10 +65,10 @@
 
         <ul class="nav *flex-column flex-row nav-pills">
           <li class="nav-item col-sm-1" data-toggle="modal" data-target="#item"  @click=editUser(row.item)>
-            <fa icon=edit />         
+            <fa icon=edit />
           </li>
           <li class="nav-item col-sm-1" @click=deleteUser(row.item.id)>
-            <fa icon=trash-alt />         
+            <fa icon=trash-alt />
           </li>
         </ul>
 
@@ -79,7 +79,7 @@
 
               <card :title="$t('your_info')">
                 <form @submit.prevent=update(form.id) @keydown="form.onKeydown($event)">
-                  <alert-success :form="form" :message="$t('info_updated')" />                   
+                  <alert-success :form="form" :message="$t('info_updated')" />
 
                   <!-- Name -->
                   <div class="form-group row">
@@ -109,7 +109,7 @@
                       </button>
                     </div>
                   </div>
-                </form>                
+                </form>
               </card>
 
             </div>
@@ -117,8 +117,8 @@
         </div>
 
       </template>
-      
-    </b-table>    
+
+    </b-table>
 
     <b-row>
       <b-col md="6" class="my-1">
@@ -137,10 +137,10 @@
 <script>
   import { mapGetters } from 'vuex'
   import Form from 'vform'
-  
+
   export default {
     middleware: 'auth',
-    data() {      
+    data() {
       return {
         // items: [],
         form: new Form({
@@ -181,18 +181,18 @@
             return { text: f.label, value: f.key }
           })
       }
-    }, 
+    },
     mounted() {
       this.$store.dispatch('users/getUser').then(() => {
         // Set the initial number of items
-        this.totalRows = this.items.length 
-      })   
+        this.totalRows = this.items.length
+      })
     },
     methods: {
       info(item, index, button) {
         this.infoModal.title = `Row index: ${index}`
         this.infoModal.content = JSON.stringify(item, null, 2)
-        this.$root.$emit('bv::show::modal', this.infoModal.id, button) 
+        this.$root.$emit('bv::show::modal', this.infoModal.id, button)
       },
       resetInfoModal() {
         this.infoModal.title = ''
@@ -202,20 +202,20 @@
         // Trigger pagination to update the number of buttons/pages due to filtering
         this.totalRows = filteredItems.length
         this.currentPage = 1
-      }, 
+      },
       deleteUser(id){
         this.$store.dispatch('users/deleteUser', id)
-      }, 
+      },
       editUser(user){
         this.form.name = user.name
-        this.form.email = user.email 
-        this.form.id = user.id       
+        this.form.email = user.email
+        this.form.id = user.id
       },
       async update (id) {
         const { data } = await this.form.patch('/api/users/'+id)
-      
+
         this.$store.dispatch('users/updateUser', { users: data })
-        
+
         if(window.config.authID == id){
           const { data } = await this.form.patch('/api/settings/profile')
           this.$store.dispatch('auth/updateUser', { user: data })
@@ -223,12 +223,11 @@
       }
     }
   }
-        
+
 </script>
 
 <style scoped>
   .nav-item {
     cursor: pointer;
-  }  
+  }
 </style>
-  
