@@ -22,11 +22,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     Route::patch('settings/profile', 'Settings\ProfileController@update');
     Route::patch('settings/password', 'Settings\PasswordController@update');
-    // Route::get('/users', 'UserController@index');
-    // Route::post('/user/{id}', 'UserController@destroy');
-    
-    Route::resources([
-        'users' => 'UserController'        
+    Route::apiResources([
+        'users' => 'UserController'
     ]);
 });
 

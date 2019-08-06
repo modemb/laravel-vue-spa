@@ -26,8 +26,9 @@
         <div class="col-md-9 ml-md-auto">
           <v-button :loading="form.busy" type="success">
             {{ $t('update') }}
-          </v-button>
-        </div>
+          </v-button> 
+          <input type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+        </div>          
       </div>
     </form>
   </card>
@@ -47,7 +48,8 @@ export default {
   data: () => ({
     form: new Form({
       name: '',
-      email: ''
+      email: '',
+      file: ''
     })
   }),
 
@@ -67,7 +69,13 @@ export default {
       const { data } = await this.form.patch('/api/settings/profile')
 
       this.$store.dispatch('auth/updateUser', { user: data })
+<<<<<<< HEAD
       this.$store.dispatch('users/updateUser', { users: data })
+=======
+    },//https://serversideup.net/uploading-files-vuejs-axios/
+    handleFileUpload(){
+      this.file = this.$refs.file.files[0];
+>>>>>>> modemb/dev
     }
   }
 }
